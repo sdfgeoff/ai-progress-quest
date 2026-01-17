@@ -54,28 +54,137 @@ const techStack = [
 ];
 
 const questTemplates = [
+    // Ideation Stage
     { name: "Prompting GPT-{X} to scaffold the project", duration: 5000, stage: "ideation" },
     { name: "Debating tabs vs spaces with Claude", duration: 4000, stage: "ideation" },
+    { name: "Googling 'how to start a startup' at 3am", duration: 3500, stage: "ideation" },
+    { name: "Watching 12 hours of Y Combinator videos", duration: 6000, stage: "ideation" },
+    { name: "Registering 15 domain names you'll never use", duration: 2500, stage: "ideation" },
+    { name: "Making a vision board with stock photos", duration: 3000, stage: "ideation" },
+    { name: "Arguing whether to build mobile-first or web-first", duration: 4000, stage: "ideation" },
+    { name: "Creating a Figma account and staring at blank canvas", duration: 3500, stage: "ideation" },
+    { name: "Asking ChatGPT if your idea already exists (it does)", duration: 4500, stage: "ideation" },
+    { name: "Drawing the 'how it works' diagram on a whiteboard", duration: 4000, stage: "ideation" },
+    { name: "Researching competitors and getting discouraged", duration: 5000, stage: "ideation" },
+    { name: "Making a Notion workspace with 50 empty pages", duration: 3000, stage: "ideation" },
+    { name: "Watching 'The Social Network' for motivation", duration: 6000, stage: "ideation" },
+    { name: "Procrastinating by redesigning your logo", duration: 4500, stage: "ideation" },
+    
+    // MVP Stage
     { name: "Asking Copilot to implement the auth system", duration: 6000, stage: "mvp" },
     { name: "Regenerating the database schema for the 47th time", duration: 5000, stage: "mvp" },
     { name: "Watching Devin refactor the entire codebase", duration: 7000, stage: "mvp" },
     { name: "Fixing the bugs that the AI introduced while fixing bugs", duration: 5500, stage: "mvp" },
+    { name: "Adding dark mode (finally)", duration: 4000, stage: "mvp" },
+    { name: "npm install-ing 200 packages for a todo list", duration: 5000, stage: "mvp" },
+    { name: "Copying code from Stack Overflow without understanding it", duration: 3500, stage: "mvp" },
+    { name: "Arguing about which state management library to use", duration: 4500, stage: "mvp" },
+    { name: "Setting up ESLint and immediately disabling all rules", duration: 3000, stage: "mvp" },
+    { name: "Building a design system for your 3-page app", duration: 6000, stage: "mvp" },
+    { name: "Adding Google Analytics but never checking it", duration: 2500, stage: "mvp" },
+    { name: "Implementing password reset (forgot to test)", duration: 5500, stage: "mvp" },
+    { name: "Adding loading spinners to everything", duration: 3000, stage: "mvp" },
+    { name: "Configuring webpack for 6 hours", duration: 7000, stage: "mvp" },
+    { name: "Setting up TypeScript and using 'any' everywhere", duration: 5000, stage: "mvp" },
+    { name: "Adding accessibility features you don't understand", duration: 4500, stage: "mvp" },
+    { name: "Implementing infinite scroll that breaks", duration: 4000, stage: "mvp" },
+    { name: "Setting up Redux for state that could be useState", duration: 5500, stage: "mvp" },
+    
+    // Testing Stage
+    { name: "Writing tests that just assert true === true", duration: 3000, stage: "testing" },
+    { name: "Googling 'how to write unit tests'", duration: 3500, stage: "testing" },
+    { name: "Setting up Jest and never running it", duration: 4000, stage: "testing" },
+    { name: "Achieving 100% test coverage by testing getters", duration: 5000, stage: "testing" },
+    { name: "Writing integration tests that flake 50% of the time", duration: 5500, stage: "testing" },
+    { name: "Mocking everything until tests are meaningless", duration: 4500, stage: "testing" },
+    { name: "Adding 'skip' to failing tests", duration: 2000, stage: "testing" },
+    { name: "Running tests in production to see what happens", duration: 6000, stage: "testing" },
+    { name: "Writing e2e tests that take 2 hours to run", duration: 7000, stage: "testing" },
+    { name: "Testing in production because staging is broken", duration: 4000, stage: "testing" },
+    
+    // Launch Stage
     { name: "Deploying to production (YOLO mode enabled)", duration: 4000, stage: "launch" },
     { name: "Setting up 27 different monitoring tools", duration: 4500, stage: "launch" },
-    { name: "Writing tests that just assert true === true", duration: 3000, stage: "testing" },
+    { name: "Buying a custom domain for $2000", duration: 3000, stage: "launch" },
+    { name: "Setting up SSL certificates at 2am", duration: 5000, stage: "launch" },
+    { name: "Configuring DNS and breaking email", duration: 4500, stage: "launch" },
+    { name: "Writing launch announcement that nobody reads", duration: 3500, stage: "launch" },
+    { name: "Stress testing with your laptop's browser tabs", duration: 4000, stage: "launch" },
+    { name: "Setting up CDN to handle the 5 concurrent users", duration: 5000, stage: "launch" },
+    { name: "Creating a Product Hunt launch plan", duration: 4500, stage: "launch" },
+    { name: "Deploying on Friday at 5pm (bold move)", duration: 3500, stage: "launch" },
+    { name: "Setting up auto-scaling for traffic that never comes", duration: 5500, stage: "launch" },
+    
+    // Marketing Stage
     { name: "Posting on HackerNews and refreshing frantically", duration: 6000, stage: "marketing" },
     { name: "Tweeting 'We're so back' after gaining 2 users", duration: 2000, stage: "marketing" },
     { name: "Cold emailing influencers who will never respond", duration: 5000, stage: "marketing" },
+    { name: "Updating the landing page hero section for the 100th time", duration: 3000, stage: "marketing" },
+    { name: "Implementing SEO that definitely isn't keyword stuffing", duration: 4500, stage: "marketing" },
+    { name: "Creating TikTok account for B2B SaaS product", duration: 3500, stage: "marketing" },
+    { name: "Writing blog posts that rank for nothing", duration: 5000, stage: "marketing" },
+    { name: "Buying Twitter followers (organic growth is hard)", duration: 2500, stage: "marketing" },
+    { name: "Making promotional videos with stock footage", duration: 4500, stage: "marketing" },
+    { name: "Setting up affiliate program for your free product", duration: 4000, stage: "marketing" },
+    { name: "Spamming Reddit and getting banned", duration: 3000, stage: "marketing" },
+    { name: "Creating fake testimonials with AI", duration: 3500, stage: "marketing" },
+    { name: "Running Google Ads that cost $50/click", duration: 5000, stage: "marketing" },
+    { name: "Building an email list of 3 subscribers", duration: 3000, stage: "marketing" },
+    { name: "Posting in 47 Discord servers simultaneously", duration: 4000, stage: "marketing" },
+    { name: "Making a launch video in iMovie", duration: 5500, stage: "marketing" },
+    
+    // Growth Stage
     { name: "Implementing the feature that 1 user requested", duration: 6000, stage: "growth" },
     { name: "Pivoting to AI because everything is AI now", duration: 5000, stage: "growth" },
-    { name: "Raising a seed round from your parents", duration: 7000, stage: "funding" },
-    { name: "Updating the landing page hero section for the 100th time", duration: 3000, stage: "marketing" },
-    { name: "Arguing with investors about your 'unique moat'", duration: 6000, stage: "funding" },
-    { name: "Rewriting everything in Rust for 'performance'", duration: 8000, stage: "optimization" },
-    { name: "Adding dark mode (finally)", duration: 4000, stage: "mvp" },
-    { name: "Implementing SEO that definitely isn't keyword stuffing", duration: 4500, stage: "marketing" },
     { name: "Calculating unit economics on a napkin", duration: 3000, stage: "growth" },
-    { name: "Scheduling exit meetings with acqui-hire offers", duration: 9000, stage: "exit" }
+    { name: "Adding gamification nobody asked for", duration: 5500, stage: "growth" },
+    { name: "Building integrations with apps nobody uses", duration: 6000, stage: "growth" },
+    { name: "Implementing referral program that generates 0 referrals", duration: 4500, stage: "growth" },
+    { name: "A/B testing button colors with 10 daily users", duration: 4000, stage: "growth" },
+    { name: "Analyzing user behavior of your test accounts", duration: 3500, stage: "growth" },
+    { name: "Adding push notifications that annoy everyone", duration: 4000, stage: "growth" },
+    { name: "Building mobile app for your mobile website", duration: 7000, stage: "growth" },
+    { name: "Implementing viral loops that don't go viral", duration: 5000, stage: "growth" },
+    { name: "Creating freemium tier with 1 useful feature", duration: 4500, stage: "growth" },
+    { name: "Adding AI chatbot that can't answer questions", duration: 6000, stage: "growth" },
+    { name: "Pivoting to Web3 (it's just a form with Ethereum)", duration: 5500, stage: "growth" },
+    
+    // Funding Stage
+    { name: "Raising a seed round from your parents", duration: 7000, stage: "funding" },
+    { name: "Arguing with investors about your 'unique moat'", duration: 6000, stage: "funding" },
+    { name: "Making a pitch deck with 80 slides", duration: 5000, stage: "funding" },
+    { name: "Calling it 'pre-revenue' instead of 'no revenue'", duration: 3000, stage: "funding" },
+    { name: "Exaggerating TAM to '$500 billion'", duration: 3500, stage: "funding" },
+    { name: "Meeting with VCs who ghost you forever", duration: 6000, stage: "funding" },
+    { name: "Practicing pitch in front of your cat", duration: 4000, stage: "funding" },
+    { name: "Applying to accelerators and getting rejected", duration: 5000, stage: "funding" },
+    { name: "Cold emailing every VC on Crunchbase", duration: 4500, stage: "funding" },
+    { name: "Making financial projections with hockey stick growth", duration: 4000, stage: "funding" },
+    { name: "Networking at events where nobody invests", duration: 5500, stage: "funding" },
+    { name: "Creating SAFE notes you don't understand", duration: 4500, stage: "funding" },
+    
+    // Optimization Stage
+    { name: "Rewriting everything in Rust for 'performance'", duration: 8000, stage: "optimization" },
+    { name: "Optimizing database queries nobody runs", duration: 5000, stage: "optimization" },
+    { name: "Adding caching that causes more problems", duration: 5500, stage: "optimization" },
+    { name: "Migrating to microservices for a monolith problem", duration: 7000, stage: "optimization" },
+    { name: "Implementing GraphQL to avoid REST", duration: 6000, stage: "optimization" },
+    { name: "Switching to Kubernetes for your single container", duration: 7500, stage: "optimization" },
+    { name: "Optimizing images that are already optimized", duration: 4000, stage: "optimization" },
+    { name: "Adding lazy loading that breaks everything", duration: 5000, stage: "optimization" },
+    { name: "Implementing server-side rendering for static content", duration: 6500, stage: "optimization" },
+    { name: "Switching databases for 0.1ms improvement", duration: 7000, stage: "optimization" },
+    { name: "Adding Redis cache for fun", duration: 4500, stage: "optimization" },
+    
+    // Exit Stage
+    { name: "Scheduling exit meetings with acqui-hire offers", duration: 9000, stage: "exit" },
+    { name: "Getting acquired for the value of your domain name", duration: 8000, stage: "exit" },
+    { name: "Selling to competitor who shuts it down", duration: 7500, stage: "exit" },
+    { name: "Negotiating equity that vests over 4 years", duration: 6000, stage: "exit" },
+    { name: "Celebrating exit with team of 1 (you)", duration: 5000, stage: "exit" },
+    { name: "Signing non-compete that prevents everything", duration: 6500, stage: "exit" },
+    { name: "Planning next startup during exit negotiations", duration: 5500, stage: "exit" },
+    { name: "Updating LinkedIn to 'Former Founder'", duration: 3000, stage: "exit" }
 ];
 
 const agentActivities = [
@@ -391,13 +500,13 @@ function startQuest() {
     // Reset quest completing flag
     gameState.questCompleting = false;
     
-    // Filter quests by current stage or allow any
-    const availableQuests = questTemplates.filter(q => {
-        if (gameState.stage === 'exit') return q.stage === 'exit';
-        return true; // Allow any quest
-    });
+    // Filter quests by current stage
+    const availableQuests = questTemplates.filter(q => q.stage === gameState.stage);
     
-    const quest = availableQuests[Math.floor(Math.random() * availableQuests.length)];
+    // Fallback to all quests if no quests available for current stage (shouldn't happen)
+    const questPool = availableQuests.length > 0 ? availableQuests : questTemplates;
+    
+    const quest = questPool[Math.floor(Math.random() * questPool.length)];
     gameState.currentQuest = quest;
     gameState.questProgress = 0;
     gameState.questTasksCompleted = 0;
