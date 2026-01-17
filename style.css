@@ -336,6 +336,27 @@ h2, h3 {
     background: #6366f1;
 }
 
+/* Footer */
+.footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 20px;
+    color: #a0a0a0;
+    font-size: 0.9em;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer a {
+    color: #6366f1;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.footer a:hover {
+    color: #ffd700;
+    text-decoration: underline;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     h1 {

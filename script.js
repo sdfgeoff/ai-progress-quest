@@ -107,11 +107,14 @@ let gameState = {
     questProgress: 0,
     questsCompleted: 0,
     stage: "ideation",
-    isRunning: false
+    isRunning: false,
+    questTasksCompleted: 0,
+    questTasksTotal: 0
 };
 
 let questInterval = null;
 let agentInterval = null;
+let agentProgressIntervals = [];
 
 // Elements
 const rollBtn = document.getElementById('roll-btn');
@@ -189,34 +192,35 @@ function startQuest() {
     const quest = availableQuests[Math.floor(Math.random() * availableQuests.length)];
     gameState.currentQuest = quest;
     gameState.questProgress = 0;
+    gameState.questTasksCompleted = 0;
+    gameState.questTasksTotal = Math.floor(Math.random() * 5) + 8; // 8-12 tasks per quest
     
     const questNameEl = document.getElementById('quest-name');
     const questStatusEl = document.getElementById('quest-status');
     const progressBar = document.getElementById('quest-progress');
     
     questNameEl.textContent = quest.name;
-    questStatusEl.textContent = 'In progress...';
+    questStatusEl.textContent = `Waiting for agents... (0/${gameState.questTasksTotal} tasks completed)`;
     progressBar.style.width = '0%';
     
     addLog(`⚔️ New quest: ${quest.name}`);
+}
+
+function onAgentTaskComplete() {
+    if (!gameState.isRunning || !gameState.currentQuest) return;
     
-    // Progress the quest
-    const steps = 20;
-    const stepDuration = quest.duration / steps;
-    let currentStep = 0;
+    gameState.questTasksCompleted++;
+    gameState.questProgress = (gameState.questTasksCompleted / gameState.questTasksTotal) * 100;
     
-    if (questInterval) clearInterval(questInterval);
+    const progressBar = document.getElementById('quest-progress');
+    const questStatusEl = document.getElementById('quest-status');
     
-    questInterval = setInterval(() => {
-        currentStep++;
-        gameState.questProgress = (currentStep / steps) * 100;
-        progressBar.style.width = gameState.questProgress + '%';
-        
-        if (currentStep >= steps) {
-            clearInterval(questInterval);
-            completeQuest();
-        }
-    }, stepDuration);
+    progressBar.style.width = gameState.questProgress + '%';
+    questStatusEl.textContent = `In progress... (${gameState.questTasksCompleted}/${gameState.questTasksTotal} tasks completed)`;
+    
+    if (gameState.questTasksCompleted >= gameState.questTasksTotal) {
+        completeQuest();
+    }
 }
 
 function completeQuest() {
@@ -282,45 +286,63 @@ function completeQuest() {
 function startAgentUpdates() {
     if (agentInterval) clearInterval(agentInterval);
     
+    // Clear any existing agent progress intervals
+    agentProgressIntervals.forEach(interval => clearInterval(interval));
+    agentProgressIntervals = [];
+    
     // Update agents and their progress bars
     agentInterval = setInterval(() => {
         const agents = document.querySelectorAll('.agent');
-        agents.forEach(agent => {
+        agents.forEach((agent, index) => {
             const progressBar = agent.querySelector('.agent-progress-bar');
             
-            if (Math.random() > 0.5) {
+            // Clear any existing progress interval for this agent
+            if (agent.progressInterval) {
+                clearInterval(agent.progressInterval);
+            }
+            
+            if (Math.random() > 0.3) { // 70% chance to be active
                 // Activate agent
                 const activity = agentActivities[Math.floor(Math.random() * agentActivities.length)];
                 agent.querySelector('.agent-activity').textContent = activity;
                 agent.classList.add('active');
                 
-                // Animate progress bar
+                // Animate progress bar with variable duration
                 let progress = 0;
+                const duration = Math.random() * 3000 + 2000; // 2-5 seconds
+                const steps = 20;
+                const stepDuration = duration / steps;
+                const stepSize = 100 / steps;
+                
                 const progressInterval = setInterval(() => {
-                    progress += Math.random() * 15 + 5;
+                    progress += stepSize;
                     if (progress >= 100) {
                         progress = 100;
+                        progressBar.style.width = progress + '%';
                         clearInterval(progressInterval);
-                        // Reset after completion
+                        
+                        // Agent completed a task - contribute to quest progress
+                        onAgentTaskComplete();
+                        
+                        // Reset after brief delay
                         setTimeout(() => {
                             progressBar.style.width = '0%';
-                        }, 500);
+                            agent.querySelector('.agent-activity').textContent = 'Idle';
+                            agent.classList.remove('active');
+                        }, 300);
+                    } else {
+                        progressBar.style.width = progress + '%';
                     }
-                    progressBar.style.width = progress + '%';
-                }, 200);
+                }, stepDuration);
                 
                 // Store interval so we can clear it if needed
                 agent.progressInterval = progressInterval;
+                agentProgressIntervals.push(progressInterval);
             } else {
                 // Deactivate agent
                 agent.querySelector('.agent-activity').textContent = 'Idle';
                 agent.classList.remove('active');
                 progressBar.style.width = '0%';
-                
-                // Clear any running progress animation
-                if (agent.progressInterval) {
-                    clearInterval(agent.progressInterval);
-                }
             }
         });
     }, 3000);
