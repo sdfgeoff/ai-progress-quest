@@ -4,7 +4,7 @@ A satirical idle game that parodies the "AI will build my startup" phenomenon. W
 
 ## Play Now
 
-🎮 **[Play Progress Coder Quest](https://sdfgeoff.github.io/ai-progress-quest/)** _(Update with your GitHub username)_
+🎮 **[Play Progress Coder Quest](https://sdfgeoff.github.io/ai-progress-quest/)**
 
 ## About
 
