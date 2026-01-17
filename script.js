@@ -290,62 +290,74 @@ function startAgentUpdates() {
     agentProgressIntervals.forEach(interval => clearInterval(interval));
     agentProgressIntervals = [];
     
-    // Update agents and their progress bars
-    agentInterval = setInterval(() => {
-        const agents = document.querySelectorAll('.agent');
-        agents.forEach((agent, index) => {
-            const progressBar = agent.querySelector('.agent-progress-bar');
+    const agents = document.querySelectorAll('.agent');
+    
+    // Function to try to start an agent
+    const tryStartAgent = (agent) => {
+        const progressBar = agent.querySelector('.agent-progress-bar');
+        
+        // Skip if agent is already working
+        if (agent.progressInterval || agent.isWorking) {
+            return;
+        }
+        
+        if (Math.random() > 0.3) { // 70% chance to be active
+            // Mark agent as working
+            agent.isWorking = true;
             
-            // Clear any existing progress interval for this agent
-            if (agent.progressInterval) {
-                clearInterval(agent.progressInterval);
-            }
+            // Activate agent
+            const activity = agentActivities[Math.floor(Math.random() * agentActivities.length)];
+            agent.querySelector('.agent-activity').textContent = activity;
+            agent.classList.add('active');
             
-            if (Math.random() > 0.3) { // 70% chance to be active
-                // Activate agent
-                const activity = agentActivities[Math.floor(Math.random() * agentActivities.length)];
-                agent.querySelector('.agent-activity').textContent = activity;
-                agent.classList.add('active');
-                
-                // Animate progress bar with variable duration
-                let progress = 0;
-                const duration = Math.random() * 3000 + 2000; // 2-5 seconds
-                const steps = 20;
-                const stepDuration = duration / steps;
-                const stepSize = 100 / steps;
-                
-                const progressInterval = setInterval(() => {
-                    progress += stepSize;
-                    if (progress >= 100) {
-                        progress = 100;
-                        progressBar.style.width = progress + '%';
-                        clearInterval(progressInterval);
-                        
-                        // Agent completed a task - contribute to quest progress
-                        onAgentTaskComplete();
-                        
-                        // Reset after brief delay
-                        setTimeout(() => {
-                            progressBar.style.width = '0%';
-                            agent.querySelector('.agent-activity').textContent = 'Idle';
-                            agent.classList.remove('active');
-                        }, 300);
-                    } else {
-                        progressBar.style.width = progress + '%';
+            // Animate progress bar with variable speed per agent
+            let progress = 0;
+            const duration = Math.random() * 6000 + 1500; // 1.5-7.5 seconds total duration
+            const updateInterval = 50 + Math.random() * 100; // 50-150ms between updates (varies per agent!)
+            const incrementPerUpdate = (100 / duration) * updateInterval; // Speed based on duration
+            
+            const progressInterval = setInterval(() => {
+                progress += incrementPerUpdate;
+                if (progress >= 100) {
+                    progress = 100;
+                    progressBar.style.width = progress + '%';
+                    clearInterval(progressInterval);
+                    
+                    // Remove from tracking array
+                    const idx = agentProgressIntervals.indexOf(progressInterval);
+                    if (idx > -1) {
+                        agentProgressIntervals.splice(idx, 1);
                     }
-                }, stepDuration);
-                
-                // Store interval so we can clear it if needed
-                agent.progressInterval = progressInterval;
-                agentProgressIntervals.push(progressInterval);
-            } else {
-                // Deactivate agent
-                agent.querySelector('.agent-activity').textContent = 'Idle';
-                agent.classList.remove('active');
-                progressBar.style.width = '0%';
-            }
-        });
-    }, 3000);
+                    agent.progressInterval = null;
+                    
+                    // Agent completed a task - contribute to quest progress
+                    onAgentTaskComplete();
+                    
+                    // Reset after brief delay
+                    setTimeout(() => {
+                        progressBar.style.width = '0%';
+                        agent.querySelector('.agent-activity').textContent = 'Idle';
+                        agent.classList.remove('active');
+                        agent.isWorking = false; // Mark as no longer working
+                    }, 300);
+                } else {
+                    progressBar.style.width = progress + '%';
+                }
+            }, updateInterval);
+            
+            // Store interval so we can clear it if needed
+            agent.progressInterval = progressInterval;
+            agentProgressIntervals.push(progressInterval);
+        }
+    };
+    
+    // Try to start all agents initially
+    agents.forEach(tryStartAgent);
+    
+    // Check every 2 seconds if any idle agents can start new work
+    agentInterval = setInterval(() => {
+        agents.forEach(tryStartAgent);
+    }, 2000);
 }
 
 function updateStats() {
@@ -383,6 +395,10 @@ function endGame() {
     gameState.isRunning = false;
     clearInterval(questInterval);
     clearInterval(agentInterval);
+    
+    // Clear all agent progress intervals
+    agentProgressIntervals.forEach(interval => clearInterval(interval));
+    agentProgressIntervals = [];
     
     const exitValue = gameState.funding * 10 + gameState.users * 100 + gameState.revenue * 50;
     
