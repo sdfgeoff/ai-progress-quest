@@ -108,6 +108,29 @@ const agentFailures = [
     "API key exposed in commit"
 ];
 
+const agentSuccesses = [
+    "Successfully generated boilerplate code",
+    "Implemented authentication (probably secure)",
+    "Added 47 npm dependencies",
+    "Refactored code to be 'more elegant'",
+    "Wrote comprehensive tests (that pass)",
+    "Fixed bug by adding console.log",
+    "Optimized database query (now slower)",
+    "Updated to latest framework version",
+    "Deployed without breaking prod",
+    "Resolved merge conflicts with force push",
+    "Added TypeScript types (mostly 'any')",
+    "Implemented caching layer",
+    "Migrated to microservices architecture",
+    "Dockerized the application",
+    "Set up CI/CD pipeline",
+    "Added dark mode toggle",
+    "Optimized bundle size by 2KB",
+    "Fixed security vulnerability",
+    "Integrated third-party API",
+    "Improved error handling"
+];
+
 // Game State
 let gameState = {
     idea: null,
@@ -322,6 +345,7 @@ function startAgentUpdates() {
             
             // Activate agent
             const activity = agentActivities[Math.floor(Math.random() * agentActivities.length)];
+            const agentName = agent.querySelector('.agent-name').textContent;
             agent.querySelector('.agent-activity').textContent = activity;
             agent.classList.add('active');
             
@@ -356,7 +380,7 @@ function startAgentUpdates() {
                         agent.classList.add('failed');
                         progressBar.classList.add('failed');
                         
-                        addLog(`❌ Agent failed: ${failureMessage}`, 'error');
+                        addLog(`❌ ${agentName}: ${failureMessage}`, 'error');
                         
                         // Reset after longer delay (show failure state)
                         setTimeout(() => {
@@ -367,6 +391,10 @@ function startAgentUpdates() {
                             agent.isWorking = false;
                         }, 2000);
                     } else {
+                        // Agent succeeded
+                        const successMessage = agentSuccesses[Math.floor(Math.random() * agentSuccesses.length)];
+                        addLog(`✅ ${agentName}: ${successMessage}`, 'success');
+                        
                         // Agent completed a task - contribute to quest progress
                         onAgentTaskComplete();
                         
@@ -405,6 +433,11 @@ function updateStats() {
     document.getElementById('revenue').textContent = '$' + gameState.revenue.toLocaleString() + '/mo';
     document.getElementById('burnout').textContent = Math.min(gameState.burnout, 100) + '%';
     document.getElementById('hype').textContent = gameState.hype;
+    
+    // Update level progress bar (5 quests per level)
+    const questsIntoCurrentLevel = gameState.questsCompleted % 5;
+    const levelProgress = (questsIntoCurrentLevel / 5) * 100;
+    document.getElementById('level-progress').style.width = levelProgress + '%';
 }
 
 function updateTechStack() {

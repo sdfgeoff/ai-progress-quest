@@ -134,6 +134,27 @@ h2, h3 {
     font-weight: bold;
 }
 
+.level-stat {
+    position: relative;
+}
+
+.level-progress-container {
+    width: 100%;
+    height: 6px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 3px;
+    margin-top: 8px;
+    overflow: hidden;
+    border: 1px solid #4a5568;
+}
+
+.level-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #ffd700 0%, #ffed4e 100%);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
 /* Main Panel */
 .main-panel {
     margin-bottom: 20px;
