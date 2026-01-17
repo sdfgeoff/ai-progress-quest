@@ -1,0 +1,330 @@
+// Game Data
+const businessTypes = [
+    "AI-powered", "Blockchain-based", "Quantum-ready", "Web5", "Metaverse-native",
+    "Zero-knowledge", "Decentralized", "Neural", "Autonomous", "Generative"
+];
+
+const products = [
+    "NFT marketplace for houseplants",
+    "dating app for your refrigerator's contents",
+    "social network exclusively for people named Steve",
+    "subscription service for motivational error messages",
+    "AI that generates other AIs",
+    "cryptocurrency for trading compliments",
+    "Uber but for carrying your groceries up stairs",
+    "Tinder for matching socks",
+    "LinkedIn for pets",
+    "meditation app that just tells you to stop using apps",
+    "smart contract for splitting restaurant bills",
+    "DAO for deciding what to watch on Netflix",
+    "collaborative todo list for procrastinators",
+    "serverless functions that run on solar-powered hamster wheels",
+    "email client that uses carrier pigeons as a metaphor",
+    "calendar app that automatically declines all meetings",
+    "fitness tracker for your eyeballs",
+    "recipe app that only suggests cereal",
+    "travel booking platform for visiting other people's Zoom backgrounds",
+    "project management tool that just says 'it's fine, ship it'"
+];
+
+const techStack = [
+    "React", "Next.js", "Vue", "Svelte", "Angular", "Node.js", "Deno", "Bun",
+    "TypeScript", "Python", "Rust", "Go", "Elixir", "MongoDB", "PostgreSQL",
+    "Redis", "Kafka", "Docker", "Kubernetes", "AWS", "Vercel", "Supabase",
+    "TailwindCSS", "GraphQL", "tRPC", "Prisma", "Drizzle", "Turborepo",
+    "Three.js", "WebGL", "WebAssembly", "Edge Functions", "Cloudflare Workers"
+];
+
+const questTemplates = [
+    { name: "Prompting GPT-{X} to scaffold the project", duration: 5000, stage: "ideation" },
+    { name: "Debating tabs vs spaces with Claude", duration: 4000, stage: "ideation" },
+    { name: "Asking Copilot to implement the auth system", duration: 6000, stage: "mvp" },
+    { name: "Regenerating the database schema for the 47th time", duration: 5000, stage: "mvp" },
+    { name: "Watching Devin refactor the entire codebase", duration: 7000, stage: "mvp" },
+    { name: "Fixing the bugs that the AI introduced while fixing bugs", duration: 5500, stage: "mvp" },
+    { name: "Deploying to production (YOLO mode enabled)", duration: 4000, stage: "launch" },
+    { name: "Setting up 27 different monitoring tools", duration: 4500, stage: "launch" },
+    { name: "Writing tests that just assert true === true", duration: 3000, stage: "testing" },
+    { name: "Posting on HackerNews and refreshing frantically", duration: 6000, stage: "marketing" },
+    { name: "Tweeting 'We're so back' after gaining 2 users", duration: 2000, stage: "marketing" },
+    { name: "Cold emailing influencers who will never respond", duration: 5000, stage: "marketing" },
+    { name: "Implementing the feature that 1 user requested", duration: 6000, stage: "growth" },
+    { name: "Pivoting to AI because everything is AI now", duration: 5000, stage: "growth" },
+    { name: "Raising a seed round from your parents", duration: 7000, stage: "funding" },
+    { name: "Updating the landing page hero section for the 100th time", duration: 3000, stage: "marketing" },
+    { name: "Arguing with investors about your 'unique moat'", duration: 6000, stage: "funding" },
+    { name: "Rewriting everything in Rust for 'performance'", duration: 8000, stage: "optimization" },
+    { name: "Adding dark mode (finally)", duration: 4000, stage: "mvp" },
+    { name: "Implementing SEO that definitely isn't keyword stuffing", duration: 4500, stage: "marketing" },
+    { name: "Calculating unit economics on a napkin", duration: 3000, stage: "growth" },
+    { name: "Scheduling exit meetings with acqui-hire offers", duration: 9000, stage: "exit" }
+];
+
+const agentActivities = [
+    "Generating boilerplate...",
+    "Hallucinating APIs...",
+    "Inventing best practices...",
+    "Confidently wrong...",
+    "Apologizing for mistakes...",
+    "Refactoring perfectly good code...",
+    "Adding unnecessary abstractions...",
+    "Bikeshedding variable names...",
+    "Overthinking architecture...",
+    "Copy-pasting from StackOverflow...",
+    "Reading the docs (rare)...",
+    "Suggesting to use more AI..."
+];
+
+// Game State
+let gameState = {
+    idea: null,
+    level: 1,
+    funding: 0,
+    users: 0,
+    revenue: 0,
+    burnout: 0,
+    hype: 0,
+    techStack: [],
+    currentQuest: null,
+    questProgress: 0,
+    questsCompleted: 0,
+    stage: "ideation",
+    isRunning: false
+};
+
+let questInterval = null;
+let agentInterval = null;
+
+// Elements
+const rollBtn = document.getElementById('roll-btn');
+const startBtn = document.getElementById('start-btn');
+const ideaDisplay = document.getElementById('idea-display');
+const characterCreation = document.getElementById('character-creation');
+const gameArea = document.getElementById('game-area');
+
+// Event Listeners
+rollBtn.addEventListener('click', rollIdea);
+startBtn.addEventListener('click', startGame);
+
+function rollIdea() {
+    const type = businessTypes[Math.floor(Math.random() * businessTypes.length)];
+    const product = products[Math.floor(Math.random() * products.length)];
+    
+    gameState.idea = `${type} ${product}`;
+    
+    ideaDisplay.innerHTML = `
+        <p class="idea-text">
+            <strong>Your Revolutionary Idea:</strong><br>
+            ${gameState.idea}
+        </p>
+    `;
+    
+    startBtn.style.display = 'inline-block';
+    rollBtn.textContent = '🎲 Roll Again';
+    
+    addLog('💡 Idea generated! This is definitely going to disrupt something.', 'success');
+}
+
+function startGame() {
+    if (!gameState.idea) return;
+    
+    characterCreation.style.display = 'none';
+    gameArea.style.display = 'block';
+    
+    // Initialize tech stack
+    gameState.techStack = [];
+    for (let i = 0; i < 5; i++) {
+        const tech = techStack[Math.floor(Math.random() * techStack.length)];
+        if (!gameState.techStack.includes(tech)) {
+            gameState.techStack.push(tech);
+        }
+    }
+    updateTechStack();
+    
+    addLog('🚀 Starting development! The AIs are waking up...', 'success');
+    addLog(`📋 Building: ${gameState.idea}`, 'success');
+    
+    gameState.isRunning = true;
+    startQuest();
+    startAgentUpdates();
+}
+
+function startQuest() {
+    if (!gameState.isRunning) return;
+    
+    // Filter quests by current stage or allow any
+    const availableQuests = questTemplates.filter(q => {
+        if (gameState.stage === 'exit') return q.stage === 'exit';
+        return true; // Allow any quest
+    });
+    
+    const quest = availableQuests[Math.floor(Math.random() * availableQuests.length)];
+    gameState.currentQuest = quest;
+    gameState.questProgress = 0;
+    
+    const questNameEl = document.getElementById('quest-name');
+    const questStatusEl = document.getElementById('quest-status');
+    const progressBar = document.getElementById('quest-progress');
+    
+    questNameEl.textContent = quest.name;
+    questStatusEl.textContent = 'In progress...';
+    progressBar.style.width = '0%';
+    
+    addLog(`⚔️ New quest: ${quest.name}`);
+    
+    // Progress the quest
+    const steps = 20;
+    const stepDuration = quest.duration / steps;
+    let currentStep = 0;
+    
+    if (questInterval) clearInterval(questInterval);
+    
+    questInterval = setInterval(() => {
+        currentStep++;
+        gameState.questProgress = (currentStep / steps) * 100;
+        progressBar.style.width = gameState.questProgress + '%';
+        
+        if (currentStep >= steps) {
+            clearInterval(questInterval);
+            completeQuest();
+        }
+    }, stepDuration);
+}
+
+function completeQuest() {
+    gameState.questsCompleted++;
+    
+    // Update stats
+    gameState.funding += Math.floor(Math.random() * 50000) + 10000;
+    gameState.users += Math.floor(Math.random() * 1000) + 100;
+    gameState.revenue += Math.floor(Math.random() * 5000) + 500;
+    gameState.burnout += Math.floor(Math.random() * 5) + 1;
+    gameState.hype += Math.floor(Math.random() * 10) + 5;
+    
+    // Level up every 5 quests
+    if (gameState.questsCompleted % 5 === 0) {
+        gameState.level++;
+        addLog(`🎉 Level Up! You are now Level ${gameState.level}`, 'success');
+        
+        // Add new tech to stack
+        const newTech = techStack[Math.floor(Math.random() * techStack.length)];
+        if (!gameState.techStack.includes(newTech)) {
+            gameState.techStack.push(newTech);
+            updateTechStack();
+            addLog(`💻 New technology added: ${newTech}`, 'success');
+        }
+    }
+    
+    // Update stage based on progress
+    if (gameState.questsCompleted > 30) {
+        gameState.stage = 'exit';
+    } else if (gameState.questsCompleted > 25) {
+        gameState.stage = 'optimization';
+    } else if (gameState.questsCompleted > 20) {
+        gameState.stage = 'funding';
+    } else if (gameState.questsCompleted > 15) {
+        gameState.stage = 'growth';
+    } else if (gameState.questsCompleted > 10) {
+        gameState.stage = 'marketing';
+    } else if (gameState.questsCompleted > 5) {
+        gameState.stage = 'launch';
+    } else if (gameState.questsCompleted > 3) {
+        gameState.stage = 'testing';
+    } else if (gameState.questsCompleted > 1) {
+        gameState.stage = 'mvp';
+    }
+    
+    updateStats();
+    
+    const questStatusEl = document.getElementById('quest-status');
+    questStatusEl.textContent = 'Complete!';
+    
+    addLog(`✅ Quest complete: ${gameState.currentQuest.name}`, 'success');
+    
+    // Check for exit
+    if (gameState.stage === 'exit' && Math.random() > 0.7) {
+        endGame();
+        return;
+    }
+    
+    // Start next quest after a brief delay
+    setTimeout(startQuest, 1500);
+}
+
+function startAgentUpdates() {
+    if (agentInterval) clearInterval(agentInterval);
+    
+    agentInterval = setInterval(() => {
+        const agents = document.querySelectorAll('.agent');
+        agents.forEach(agent => {
+            if (Math.random() > 0.5) {
+                const activity = agentActivities[Math.floor(Math.random() * agentActivities.length)];
+                agent.querySelector('.agent-activity').textContent = activity;
+                agent.classList.add('active');
+            } else {
+                agent.querySelector('.agent-activity').textContent = 'Idle';
+                agent.classList.remove('active');
+            }
+        });
+    }, 3000);
+}
+
+function updateStats() {
+    document.getElementById('level').textContent = gameState.level;
+    document.getElementById('funding').textContent = '$' + gameState.funding.toLocaleString();
+    document.getElementById('users').textContent = gameState.users.toLocaleString();
+    document.getElementById('revenue').textContent = '$' + gameState.revenue.toLocaleString() + '/mo';
+    document.getElementById('burnout').textContent = Math.min(gameState.burnout, 100) + '%';
+    document.getElementById('hype').textContent = gameState.hype;
+}
+
+function updateTechStack() {
+    const techList = document.getElementById('tech-stack-list');
+    techList.innerHTML = gameState.techStack.map(tech => 
+        `<span class="tech-item">${tech}</span>`
+    ).join('');
+}
+
+function addLog(message, type = '') {
+    const logContent = document.getElementById('activity-log');
+    const timestamp = new Date().toLocaleTimeString();
+    const entry = document.createElement('div');
+    entry.className = `log-entry ${type}`;
+    entry.innerHTML = `<span class="timestamp">[${timestamp}]</span>${message}`;
+    
+    logContent.insertBefore(entry, logContent.firstChild);
+    
+    // Keep only last 50 entries
+    while (logContent.children.length > 50) {
+        logContent.removeChild(logContent.lastChild);
+    }
+}
+
+function endGame() {
+    gameState.isRunning = false;
+    clearInterval(questInterval);
+    clearInterval(agentInterval);
+    
+    const exitValue = gameState.funding * 10 + gameState.users * 100 + gameState.revenue * 50;
+    
+    addLog('🎊 CONGRATULATIONS! You\'ve been acquired!', 'success');
+    addLog(`💰 Exit valuation: $${exitValue.toLocaleString()}`, 'success');
+    addLog(`📈 Final stats: ${gameState.users.toLocaleString()} users, $${gameState.revenue.toLocaleString()}/mo revenue`, 'success');
+    addLog(`🏆 You completed ${gameState.questsCompleted} quests and reached Level ${gameState.level}`, 'success');
+    addLog('🌴 Time to start another startup!', 'success');
+    
+    document.getElementById('quest-name').textContent = '🎉 Successfully Exited!';
+    document.getElementById('quest-status').textContent = 'You can now afford that startup hoodie!';
+    document.getElementById('quest-progress').style.width = '100%';
+    
+    // Offer to restart
+    setTimeout(() => {
+        if (confirm('Play again with a new idea?')) {
+            location.reload();
+        }
+    }, 5000);
+}
+
+// Initialize
+addLog('🎮 Welcome to Progress Coder Quest!');
+addLog('💭 Roll a startup idea to begin your journey to inevitable success...');

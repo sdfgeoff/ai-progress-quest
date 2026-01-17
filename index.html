@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress Coder Quest - The AI Startup Simulator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚔️ Progress Coder Quest ⚔️</h1>
+            <p class="tagline">The Startup That Builds Itself™</p>
+        </header>
+
+        <div id="character-creation" class="section">
+            <h2>Roll Your Startup Idea</h2>
+            <div class="creation-panel">
+                <div class="idea-display" id="idea-display">
+                    <p class="idea-text">Click "Roll Idea" to generate your revolutionary startup concept...</p>
+                </div>
+                <button id="roll-btn" class="primary-btn">🎲 Roll Idea</button>
+                <button id="start-btn" class="primary-btn" style="display: none;">🚀 Start Building</button>
+            </div>
+        </div>
+
+        <div id="game-area" class="section" style="display: none;">
+            <div class="stats-panel">
+                <h3>📊 Startup Stats</h3>
+                <div class="stats-grid">
+                    <div class="stat">
+                        <span class="stat-label">Level:</span>
+                        <span class="stat-value" id="level">1</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Funding:</span>
+                        <span class="stat-value" id="funding">$0</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Users:</span>
+                        <span class="stat-value" id="users">0</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Revenue:</span>
+                        <span class="stat-value" id="revenue">$0/mo</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Burnout:</span>
+                        <span class="stat-value" id="burnout">0%</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Hype:</span>
+                        <span class="stat-value" id="hype">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="main-panel">
+                <div class="current-quest">
+                    <h3>🎯 Current Quest</h3>
+                    <div id="quest-name" class="quest-name">Initializing AI agents...</div>
+                    <div class="progress-container">
+                        <div id="quest-progress" class="progress-bar"></div>
+                    </div>
+                    <div id="quest-status" class="quest-status">Preparing...</div>
+                </div>
+
+                <div class="agent-status">
+                    <h3>🤖 Active Agents</h3>
+                    <div id="agent-list" class="agent-list">
+                        <div class="agent">
+                            <span class="agent-name">GPT-7-Turbo-Ultra</span>
+                            <span class="agent-activity">Idle</span>
+                        </div>
+                        <div class="agent">
+                            <span class="agent-name">Claude Sonnet Pro Max</span>
+                            <span class="agent-activity">Idle</span>
+                        </div>
+                        <div class="agent">
+                            <span class="agent-name">Devin (AI Software Engineer)</span>
+                            <span class="agent-activity">Idle</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tech-stack">
+                    <h3>💻 Tech Stack</h3>
+                    <div id="tech-stack-list" class="tech-list"></div>
+                </div>
+            </div>
+
+            <div class="log-panel">
+                <h3>📜 Activity Log</h3>
+                <div id="activity-log" class="log-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
