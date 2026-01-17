@@ -380,6 +380,7 @@ function completeQuest() {
     gameState.hype += Math.floor(Math.random() * 10) + 5;
     
     // Level up every 5 quests
+    const previousLevel = gameState.level;
     if (gameState.questsCompleted % 5 === 0) {
         gameState.level++;
         addLog(`🎉 Level Up! You are now Level ${gameState.level}`, 'success');
@@ -393,28 +394,30 @@ function completeQuest() {
         }
     }
     
-    // Update stage based on progress
+    // Update stage based on level (with varying durations per stage)
     const previousStage = gameState.stage;
-    if (gameState.questsCompleted > 30) {
+    if (gameState.level >= 50) {
         gameState.stage = 'exit';
-    } else if (gameState.questsCompleted > 25) {
+    } else if (gameState.level >= 40) {
         gameState.stage = 'optimization';
-    } else if (gameState.questsCompleted > 20) {
+    } else if (gameState.level >= 30) {
         gameState.stage = 'funding';
-    } else if (gameState.questsCompleted > 15) {
+    } else if (gameState.level >= 20) {
         gameState.stage = 'growth';
-    } else if (gameState.questsCompleted > 10) {
+    } else if (gameState.level >= 12) {
         gameState.stage = 'marketing';
-    } else if (gameState.questsCompleted > 5) {
+    } else if (gameState.level >= 6) {
         gameState.stage = 'launch';
-    } else if (gameState.questsCompleted > 3) {
+    } else if (gameState.level >= 4) {
         gameState.stage = 'testing';
-    } else if (gameState.questsCompleted > 1) {
+    } else if (gameState.level >= 2) {
         gameState.stage = 'mvp';
+    } else {
+        gameState.stage = 'ideation';
     }
     
-    // Log stage change
-    if (previousStage !== gameState.stage) {
+    // Log stage change (only when level changes and stage changes)
+    if (previousLevel !== gameState.level && previousStage !== gameState.stage) {
         updateStageDiagram();
         addLog(`📍 Stage advanced: ${previousStage} → ${gameState.stage}`, 'success');
     }
