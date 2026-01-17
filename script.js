@@ -93,6 +93,21 @@ const agentActivities = [
     "Suggesting to use more AI..."
 ];
 
+const agentFailures = [
+    "Import error: module not found",
+    "Forgot to install dependencies",
+    "Infinite loop detected",
+    "Out of context window",
+    "Rate limit exceeded",
+    "Hallucinated a library that doesn't exist",
+    "Syntax error on line 42",
+    "TypeScript errors (ignored)",
+    "Merge conflict catastrophe",
+    "Deployed to wrong environment",
+    "Accidentally deleted node_modules",
+    "API key exposed in commit"
+];
+
 // Game State
 let gameState = {
     idea: null,
@@ -330,16 +345,39 @@ function startAgentUpdates() {
                     }
                     agent.progressInterval = null;
                     
-                    // Agent completed a task - contribute to quest progress
-                    onAgentTaskComplete();
+                    // 15% chance of failure
+                    const failed = Math.random() < 0.15;
                     
-                    // Reset after brief delay
-                    setTimeout(() => {
-                        progressBar.style.width = '0%';
-                        agent.querySelector('.agent-activity').textContent = 'Idle';
+                    if (failed) {
+                        // Agent failed - show error state
+                        const failureMessage = agentFailures[Math.floor(Math.random() * agentFailures.length)];
+                        agent.querySelector('.agent-activity').textContent = failureMessage;
                         agent.classList.remove('active');
-                        agent.isWorking = false; // Mark as no longer working
-                    }, 300);
+                        agent.classList.add('failed');
+                        progressBar.classList.add('failed');
+                        
+                        addLog(`❌ Agent failed: ${failureMessage}`, 'error');
+                        
+                        // Reset after longer delay (show failure state)
+                        setTimeout(() => {
+                            progressBar.style.width = '0%';
+                            progressBar.classList.remove('failed');
+                            agent.querySelector('.agent-activity').textContent = 'Idle';
+                            agent.classList.remove('failed');
+                            agent.isWorking = false;
+                        }, 2000);
+                    } else {
+                        // Agent completed a task - contribute to quest progress
+                        onAgentTaskComplete();
+                        
+                        // Reset after brief delay
+                        setTimeout(() => {
+                            progressBar.style.width = '0%';
+                            agent.querySelector('.agent-activity').textContent = 'Idle';
+                            agent.classList.remove('active');
+                            agent.isWorking = false;
+                        }, 300);
+                    }
                 } else {
                     progressBar.style.width = progress + '%';
                 }
