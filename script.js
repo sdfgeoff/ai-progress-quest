@@ -231,7 +231,7 @@ const agentSuccesses = [
 let gameState = {
     idea: null,
     level: 1,
-    funding: 0,
+    funding: 50000, // Start with seed funding
     users: 0,
     revenue: 0,
     burnout: 0,
@@ -244,12 +244,15 @@ let gameState = {
     isRunning: false,
     questTasksCompleted: 0,
     questTasksTotal: 0,
-    questCompleting: false
+    questCompleting: false,
+    subscriptionRevenuePerUser: 10, // $ per user per month
+    agentCostPerRun: 50 // $ per agent task
 };
 
 let questInterval = null;
 let agentInterval = null;
 let agentProgressIntervals = [];
+let revenueInterval = null; // For periodic subscription revenue
 
 // Elements
 const rollBtn = document.getElementById('roll-btn');
@@ -313,10 +316,73 @@ function startGame() {
     
     addLog('🚀 Starting development! The AIs are waking up...', 'success');
     addLog(`📋 Building: ${gameState.idea}`, 'success');
+    addLog(`💰 Starting with $${gameState.funding.toLocaleString()} in seed funding`, 'success');
+    addLog(`💵 Subscription revenue: $${gameState.subscriptionRevenuePerUser} per user (collected every 30s)`, 'success');
+    addLog(`💸 Agent cost: $${gameState.agentCostPerRun} per task`, 'success');
     
     gameState.isRunning = true;
     startQuest();
     startAgentUpdates();
+    startRevenueGeneration();
+}
+
+function startRevenueGeneration() {
+    if (revenueInterval) clearInterval(revenueInterval);
+    
+    // Generate subscription revenue every 30 seconds
+    revenueInterval = setInterval(() => {
+        if (!gameState.isRunning) return;
+        
+        const monthlyRevenue = gameState.users * gameState.subscriptionRevenuePerUser;
+        if (monthlyRevenue > 0) {
+            gameState.funding += monthlyRevenue;
+            gameState.revenue = monthlyRevenue; // Update monthly revenue display
+            updateStats();
+            addLog(`💰 Subscription revenue: +$${monthlyRevenue.toLocaleString()} from ${gameState.users.toLocaleString()} users`, 'success');
+        }
+    }, 30000); // Every 30 seconds = 1 "month" in game time
+}
+
+function deductAgentCost() {
+    if (!gameState.isRunning) return false;
+    
+    gameState.funding -= gameState.agentCostPerRun;
+    updateStats();
+    
+    // Check if funding ran out
+    if (gameState.funding <= 0) {
+        gameState.funding = 0;
+        updateStats();
+        gameOver();
+        return false; // Indicates game over
+    }
+    
+    return true; // Continue playing
+}
+
+function gameOver() {
+    gameState.isRunning = false;
+    clearInterval(questInterval);
+    clearInterval(agentInterval);
+    clearInterval(revenueInterval);
+    
+    // Clear all agent progress intervals
+    agentProgressIntervals.forEach(interval => clearInterval(interval));
+    agentProgressIntervals = [];
+    
+    addLog('💀 OUT OF FUNDING! Your startup has run out of money!', 'error');
+    addLog(`📊 Final stats: Level ${gameState.level}, ${gameState.users.toLocaleString()} users, ${gameState.questsCompleted} quests completed`, 'error');
+    addLog('💡 Try to balance user growth with AI agent costs!', '');
+    
+    document.getElementById('quest-name').textContent = '💸 Bankrupt!';
+    document.getElementById('quest-status').textContent = 'Out of funding - Game Over';
+    
+    // Offer to restart
+    setTimeout(() => {
+        if (confirm('You ran out of funding! Play again with a new idea?')) {
+            location.reload();
+        }
+    }, 3000);
 }
 
 function startQuest() {
@@ -372,12 +438,13 @@ function onAgentTaskComplete() {
 function completeQuest() {
     gameState.questsCompleted++;
     
-    // Update stats
-    gameState.funding += Math.floor(Math.random() * 50000) + 10000;
-    gameState.users += Math.floor(Math.random() * 1000) + 100;
-    gameState.revenue += Math.floor(Math.random() * 5000) + 500;
+    // Update stats - gain users (which generate subscription revenue)
+    const newUsers = Math.floor(Math.random() * 1000) + 100;
+    gameState.users += newUsers;
     gameState.burnout += Math.floor(Math.random() * 5) + 1;
     gameState.hype += Math.floor(Math.random() * 10) + 5;
+    
+    addLog(`👥 Gained ${newUsers} new users! Total: ${gameState.users.toLocaleString()}`, 'success');
     
     // Level up every 5 quests
     const previousLevel = gameState.level;
@@ -511,7 +578,15 @@ function startAgentUpdates() {
                     } else {
                         // Agent succeeded
                         const successMessage = agentSuccesses[Math.floor(Math.random() * agentSuccesses.length)];
-                        addLog(`✅ ${agentName}: ${successMessage}`, 'success');
+                        
+                        // Deduct agent cost - check if game continues
+                        const canContinue = deductAgentCost();
+                        if (!canContinue) {
+                            // Game over due to lack of funding
+                            return;
+                        }
+                        
+                        addLog(`✅ ${agentName}: ${successMessage} (-$${gameState.agentCostPerRun})`, 'success');
                         
                         // Agent completed a task - contribute to quest progress
                         onAgentTaskComplete();
@@ -612,6 +687,7 @@ function endGame() {
     gameState.isRunning = false;
     clearInterval(questInterval);
     clearInterval(agentInterval);
+    clearInterval(revenueInterval);
     
     // Clear all agent progress intervals
     agentProgressIntervals.forEach(interval => clearInterval(interval));
