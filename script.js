@@ -297,6 +297,10 @@ function startGame() {
     characterCreation.style.display = 'none';
     gameArea.style.display = 'block';
     
+    // Display startup idea
+    document.getElementById('startup-idea-text').textContent = gameState.idea;
+    updateStageDiagram();
+    
     // Initialize tech stack
     gameState.techStack = [];
     for (let i = 0; i < 5; i++) {
@@ -390,6 +394,7 @@ function completeQuest() {
     }
     
     // Update stage based on progress
+    const previousStage = gameState.stage;
     if (gameState.questsCompleted > 30) {
         gameState.stage = 'exit';
     } else if (gameState.questsCompleted > 25) {
@@ -406,6 +411,12 @@ function completeQuest() {
         gameState.stage = 'testing';
     } else if (gameState.questsCompleted > 1) {
         gameState.stage = 'mvp';
+    }
+    
+    // Log stage change
+    if (previousStage !== gameState.stage) {
+        updateStageDiagram();
+        addLog(`📍 Stage advanced: ${previousStage} → ${gameState.stage}`, 'success');
     }
     
     updateStats();
@@ -549,6 +560,34 @@ function updateTechStack() {
     techList.innerHTML = gameState.techStack.map(tech => 
         `<span class="tech-item">${tech}</span>`
     ).join('');
+}
+
+function updateStageDiagram() {
+    const stages = ['ideation', 'mvp', 'testing', 'launch', 'marketing', 'growth', 'funding', 'optimization', 'exit'];
+    const currentStageIndex = stages.indexOf(gameState.stage);
+    
+    // Update all stage nodes
+    stages.forEach((stage, index) => {
+        const node = document.querySelector(`.stage-node[data-stage="${stage}"]`);
+        if (!node) return;
+        
+        node.classList.remove('active', 'completed');
+        
+        if (index === currentStageIndex) {
+            node.classList.add('active');
+        } else if (index < currentStageIndex) {
+            node.classList.add('completed');
+        }
+    });
+    
+    // Update connectors
+    const connectors = document.querySelectorAll('.stage-connector');
+    connectors.forEach((connector, index) => {
+        connector.classList.remove('completed');
+        if (index < currentStageIndex) {
+            connector.classList.add('completed');
+        }
+    });
 }
 
 function addLog(message, type = '') {
