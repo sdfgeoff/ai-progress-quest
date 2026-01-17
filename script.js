@@ -147,7 +147,8 @@ let gameState = {
     stage: "ideation",
     isRunning: false,
     questTasksCompleted: 0,
-    questTasksTotal: 0
+    questTasksTotal: 0,
+    questCompleting: false
 };
 
 let questInterval = null;
@@ -221,6 +222,9 @@ function startGame() {
 function startQuest() {
     if (!gameState.isRunning) return;
     
+    // Reset quest completing flag
+    gameState.questCompleting = false;
+    
     // Filter quests by current stage or allow any
     const availableQuests = questTemplates.filter(q => {
         if (gameState.stage === 'exit') return q.stage === 'exit';
@@ -247,6 +251,9 @@ function startQuest() {
 function onAgentTaskComplete() {
     if (!gameState.isRunning || !gameState.currentQuest) return;
     
+    // Check if quest is already completing to prevent race condition
+    if (gameState.questCompleting) return;
+    
     gameState.questTasksCompleted++;
     gameState.questProgress = (gameState.questTasksCompleted / gameState.questTasksTotal) * 100;
     
@@ -257,6 +264,7 @@ function onAgentTaskComplete() {
     questStatusEl.textContent = `In progress... (${gameState.questTasksCompleted}/${gameState.questTasksTotal} tasks completed)`;
     
     if (gameState.questTasksCompleted >= gameState.questTasksTotal) {
+        gameState.questCompleting = true;
         completeQuest();
     }
 }
