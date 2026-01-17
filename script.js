@@ -1,30 +1,48 @@
-// Game Data
-const businessTypes = [
+// Game Data - Idea Assembly Parts
+const prefixes = [
     "AI-powered", "Blockchain-based", "Quantum-ready", "Web5", "Metaverse-native",
-    "Zero-knowledge", "Decentralized", "Neural", "Autonomous", "Generative"
+    "Zero-knowledge", "Decentralized", "Neural", "Autonomous", "Generative",
+    "Crypto-native", "Edge-computing", "Serverless", "P2P", "Federated",
+    "Self-sovereign", "Tokenized", "DAO-governed", "NFT-based", "DeFi"
 ];
 
-const products = [
-    "NFT marketplace for houseplants",
-    "dating app for your refrigerator's contents",
-    "social network exclusively for people named Steve",
-    "subscription service for motivational error messages",
-    "AI that generates other AIs",
-    "cryptocurrency for trading compliments",
-    "Uber but for carrying your groceries up stairs",
-    "Tinder for matching socks",
-    "LinkedIn for pets",
-    "meditation app that just tells you to stop using apps",
-    "smart contract for splitting restaurant bills",
-    "DAO for deciding what to watch on Netflix",
-    "collaborative todo list for procrastinators",
-    "serverless functions that run on solar-powered hamster wheels",
-    "email client that uses carrier pigeons as a metaphor",
-    "calendar app that automatically declines all meetings",
-    "fitness tracker for your eyeballs",
-    "recipe app that only suggests cereal",
-    "travel booking platform for visiting other people's Zoom backgrounds",
-    "project management tool that just says 'it's fine, ship it'"
+const platforms = [
+    "marketplace", "social network", "dating app", "subscription service",
+    "platform", "ecosystem", "protocol", "API", "SaaS", "mobile app",
+    "browser extension", "Slack bot", "Discord server", "Chrome plugin",
+    "productivity tool", "analytics dashboard", "automation engine", "aggregator"
+];
+
+const actions = [
+    "for connecting", "for matching", "for discovering", "for optimizing",
+    "for monetizing", "for gamifying", "for disrupting", "for revolutionizing",
+    "for tokenizing", "for automating", "for visualizing", "for tracking",
+    "for sharing", "for trading", "for renting", "for selling",
+    "for curating", "for organizing", "for coordinating", "that eliminates"
+];
+
+const subjects = [
+    "houseplants", "refrigerator contents", "people named Steve", "error messages",
+    "other AIs", "compliments", "grocery carriers", "socks", "pets",
+    "meeting declines", "eyeball movements", "cereal preferences", "Zoom backgrounds",
+    "procrastination habits", "carrier pigeons", "restaurant bills", "todo lists",
+    "coffee orders", "parking spots", "WiFi passwords", "Spotify playlists",
+    "code reviews", "standup meetings", "office plants", "keyboard shortcuts",
+    "browser tabs", "unread emails", "Slack messages", "GitHub stars",
+    "tech debt", "merge conflicts", "dark mode preferences", "commit messages",
+    "your LinkedIn connections", "NFT avatars", "Discord roles", "crypto wallets",
+    "smart contracts", "microtransactions", "in-app purchases", "side projects"
+];
+
+const modifiers = [
+    "using machine learning", "with viral loops", "on the blockchain",
+    "in the metaverse", "through smart contracts", "with zero fees",
+    "at scale", "with network effects", "leveraging Web3",
+    "powered by GPT-5", "using quantum computing", "in real-time",
+    "with gamification", "through community governance", "using edge AI",
+    "with built-in analytics", "on autopilot", "with zero-code",
+    "that's carbon neutral", "with a mobile-first approach", "using webhooks",
+    "with semantic search", "through collaboration", "with end-to-end encryption"
 ];
 
 const techStack = [
@@ -107,10 +125,20 @@ rollBtn.addEventListener('click', rollIdea);
 startBtn.addEventListener('click', startGame);
 
 function rollIdea() {
-    const type = businessTypes[Math.floor(Math.random() * businessTypes.length)];
-    const product = products[Math.floor(Math.random() * products.length)];
+    // Assemble idea from parts
+    const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+    const platform = platforms[Math.floor(Math.random() * platforms.length)];
+    const action = actions[Math.floor(Math.random() * actions.length)];
+    const subject = subjects[Math.floor(Math.random() * subjects.length)];
     
-    gameState.idea = `${type} ${product}`;
+    // 60% chance to add a modifier at the end
+    let idea = `${prefix} ${platform} ${action} ${subject}`;
+    if (Math.random() > 0.4) {
+        const modifier = modifiers[Math.floor(Math.random() * modifiers.length)];
+        idea += ` ${modifier}`;
+    }
+    
+    gameState.idea = idea;
     
     ideaDisplay.innerHTML = `
         <p class="idea-text">
@@ -254,16 +282,45 @@ function completeQuest() {
 function startAgentUpdates() {
     if (agentInterval) clearInterval(agentInterval);
     
+    // Update agents and their progress bars
     agentInterval = setInterval(() => {
         const agents = document.querySelectorAll('.agent');
         agents.forEach(agent => {
+            const progressBar = agent.querySelector('.agent-progress-bar');
+            
             if (Math.random() > 0.5) {
+                // Activate agent
                 const activity = agentActivities[Math.floor(Math.random() * agentActivities.length)];
                 agent.querySelector('.agent-activity').textContent = activity;
                 agent.classList.add('active');
+                
+                // Animate progress bar
+                let progress = 0;
+                const progressInterval = setInterval(() => {
+                    progress += Math.random() * 15 + 5;
+                    if (progress >= 100) {
+                        progress = 100;
+                        clearInterval(progressInterval);
+                        // Reset after completion
+                        setTimeout(() => {
+                            progressBar.style.width = '0%';
+                        }, 500);
+                    }
+                    progressBar.style.width = progress + '%';
+                }, 200);
+                
+                // Store interval so we can clear it if needed
+                agent.progressInterval = progressInterval;
             } else {
+                // Deactivate agent
                 agent.querySelector('.agent-activity').textContent = 'Idle';
                 agent.classList.remove('active');
+                progressBar.style.width = '0%';
+                
+                // Clear any running progress animation
+                if (agent.progressInterval) {
+                    clearInterval(agent.progressInterval);
+                }
             }
         });
     }, 3000);

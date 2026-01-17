@@ -199,12 +199,18 @@ h2, h3 {
 
 .agent {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
     padding: 10px 15px;
     background: rgba(0, 0, 0, 0.3);
     border-radius: 6px;
     border: 1px solid #4a5568;
+}
+
+.agent-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
 }
 
 .agent-name {
@@ -215,6 +221,22 @@ h2, h3 {
 .agent-activity {
     color: #fbbf24;
     font-style: italic;
+    font-size: 0.9em;
+}
+
+.agent-progress-container {
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid #4a5568;
+    border-radius: 4px;
+    height: 12px;
+    overflow: hidden;
+}
+
+.agent-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #8b5cf6 0%, #a78bfa 100%);
+    width: 0%;
+    transition: width 0.3s ease;
 }
 
 .agent.active {
@@ -224,6 +246,10 @@ h2, h3 {
 
 .agent.active .agent-activity {
     color: #10b981;
+}
+
+.agent.active .agent-progress-bar {
+    background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
 }
 
 /* Tech Stack */
